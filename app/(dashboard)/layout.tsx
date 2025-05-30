@@ -10,9 +10,9 @@ export default function RootLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="w-full">
         <SidebarTrigger />
-        <div className="space-y-4 p-5">
+        <div className="p-5 space-y-4 relative min-h-screen ">
           <AppBreadcrumb />
           {children}
         </div>

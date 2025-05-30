@@ -9,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 
 export default function AppBreadcrumb() {
   const pathname = usePathname();

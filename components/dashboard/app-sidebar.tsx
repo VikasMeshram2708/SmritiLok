@@ -12,7 +12,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "../ui/button";
-import AppSidebarBtn from "./app-sidebar-btn";
 
 // Menu items.
 const items = [
@@ -57,7 +56,6 @@ export function AppSidebar() {
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-                  {item.title === "Locations" && <AppSidebarBtn />}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
