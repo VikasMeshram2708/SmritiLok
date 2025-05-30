@@ -26,7 +26,7 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem className="cursor-pointer">
-                  Dashboard
+                  <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">
                   Profile
