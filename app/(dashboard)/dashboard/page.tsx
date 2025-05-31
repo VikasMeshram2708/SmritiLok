@@ -1,12 +1,13 @@
-import MapContainer from "@/components/map/map-container";
-import React from "react";
+import { AppChart } from "@/components/dashboard/app-chart";
+import CardsSection from "@/components/dashboard/cards-section";
 
 export default function DashboardPage() {
   return (
     <div className="w-full">
-      <MapContainer />
-      {/* <div className="max-w-5xl mx-auto">
-      </div> */}
+      <div className="space-y-4">
+        <CardsSection />
+        <AppChart />
+      </div>
     </div>
   );
 }
