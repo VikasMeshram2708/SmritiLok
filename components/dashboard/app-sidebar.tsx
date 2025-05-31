@@ -34,6 +34,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import { SignOutButton } from "@clerk/nextjs";
 
 // Menu items with additional metadata
 const items = [
@@ -227,14 +228,15 @@ export function AppSidebar() {
         </div>
 
         <div className="h-px bg-border mb-3" />
-
-        <Button
-          variant="destructive"
-          className="w-full justify-center gap-2 font-medium"
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </Button>
+        <SignOutButton>
+          <Button
+            variant="destructive"
+            className="w-full justify-center gap-2 font-medium"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </SignOutButton>
       </SidebarFooter>
     </Sidebar>
   );

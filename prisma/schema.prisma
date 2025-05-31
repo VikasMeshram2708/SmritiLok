@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  PREMIUM
+}
+
+model User {
+  id            String   @id @default(uuid()) @map("_id")
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  role          UserRole @default(USER)
+  bio           String?
+  picture       String?  @default("https://picsum.photos/400")
+  password      String?
+
+  // timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastLogin DateTime?
+
+  // relations
+  journey Journey[]
+}
+
+model Journey {
+  id          String  @id @default(uuid()) @map("_id")
+  // journey info
+  name        String
+  displayName String?
+
+  // location info
+  latitude    String
+  longitude   String
+  country     String
+  countryCode String
+  state       String
+  region      String?
+  city        String?
+  village     String?
+
+  // categorization
+  type  String?
+  notes String?
+  tags  String[]
+
+  // media
+  photoUrls String[]
+
+  visitedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}

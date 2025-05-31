@@ -4,13 +4,15 @@
 
 ### ToDo
 
-- [ ] Add Search bar to search the locations all over the world.
+- [x] Add Auth, Middleware
+
+- [x] Add Search bar to search the locations all over the world.
 
 - [x] Remove the Plus Button from sidebar next to locations.
 
-- [ ] Add Save Location Button on details section below the map.
+- [x] Add Save Location Button on details section below the map.
 
-- [ ] Add Auth, Middleware, marketing pages contact, about, Dashboard pages profile, settings.
+- [ ] Add marketing pages contact, about, Dashboard pages profile, settings.
 
 - [x] Add Charts.
 
