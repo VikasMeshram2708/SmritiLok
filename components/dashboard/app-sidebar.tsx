@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Search,
   User,
   Home,
   MapPin,
@@ -55,6 +56,11 @@ const items = [
         icon: Clock,
       },
       { title: "Favorites", url: "/dashboard/locations/favorites", icon: Star },
+      {
+        title: "Search",
+        url: "/dashboard/locations/search",
+        icon: Search,
+      },
       {
         title: "All Locations",
         url: "/dashboard/locations/all",
