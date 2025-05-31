@@ -11,52 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Search, Loader2, Globe } from "lucide-react";
-
-// Type definitions for OpenStreetMap Nominatim API response
-interface NominatimResult {
-  place_id: number;
-  licence: string;
-  osm_type: string;
-  osm_id: number;
-  lat: string;
-  lon: string;
-  class: string;
-  type: string;
-  place_rank: number;
-  importance: number;
-  addresstype: string;
-  name: string;
-  display_name: string;
-  address?: {
-    house_number?: string;
-    road?: string;
-    suburb?: string;
-    city?: string;
-    state?: string;
-    postcode?: string;
-    country?: string;
-    country_code?: string;
-  };
-  boundingbox: string[];
-}
-
-interface LocationResult {
-  id: number;
-  name: string;
-  displayName: string;
-  coordinates: {
-    lat: number;
-    lon: number;
-  };
-  address: {
-    city?: string;
-    state?: string;
-    country?: string;
-    countryCode?: string;
-  };
-  type: string;
-  class: string;
-}
+import { useStore } from "@/app/context/store";
+import { useRouter } from "next/navigation";
 
 export default function LocSearch() {
   const [isPending, startTransition] = useTransition();
@@ -66,6 +22,11 @@ export default function LocSearch() {
     useState<LocationResult | null>(null);
   const [error, setError] = useState<string>("");
   const debounceText = useDebounce(text, 500);
+
+  //   store
+  const { addCoords, removeCoords } = useStore();
+  //   router
+  const router = useRouter();
 
   // Search locations using OpenStreetMap Nominatim API
   const searchLocations = async (query: string): Promise<LocationResult[]> => {
@@ -160,8 +121,13 @@ export default function LocSearch() {
         class: selectedLocation.class,
         savedAt: new Date().toISOString(),
       });
+      addCoords({
+        lat: selectedLocation.coordinates.lat,
+        lon: selectedLocation.coordinates.lon,
+      });
       // You can add your save logic here (API call, local storage, etc.)
       alert(`Location "${selectedLocation.name}" saved successfully!`);
+      router.push("/dashboard/locations");
     }
   };
 
@@ -171,6 +137,7 @@ export default function LocSearch() {
     setResults([]);
     setSelectedLocation(null);
     setError("");
+    removeCoords();
   };
 
   // Get location type badge color
@@ -227,7 +194,7 @@ export default function LocSearch() {
 
         {/* Loading indicator */}
         {isPending && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+          <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           </div>
         )}
@@ -284,7 +251,8 @@ export default function LocSearch() {
                     size="sm"
                   >
                     <MapPin className="h-4 w-4" />
-                    Save Location
+                    Select{" "}
+                    {`${selectedLocation.address.city}, ${selectedLocation.address.country}`}
                   </Button>
                   <Button variant="outline" onClick={handleClear} size="sm">
                     Clear

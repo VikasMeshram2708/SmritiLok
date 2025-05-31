@@ -4,36 +4,20 @@ import { Map, Marker, NavigationControl } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState, useCallback } from "react";
 import MapPin from "@/public/map/pin.png";
-
-interface Coordinates {
-  lat: number;
-  lon: number;
-}
-
-interface ViewState {
-  longitude: number;
-  latitude: number;
-  zoom: number;
-}
-
-interface LocationDetails {
-  display_name?: string;
-  address?: {
-    city?: string;
-    state?: string;
-    country?: string;
-  };
-}
+import { useStore } from "@/app/context/store";
 
 export default function MapContainer() {
+  // store
+  const { coords: selectedCoords } = useStore();
+
   const [coords, setCoords] = useState<Coordinates>({
-    lat: 28.6448,
-    lon: 77.216721,
+    lat: selectedCoords?.lat ?? 28.6448,
+    lon: selectedCoords?.lon ?? 77.216721,
   });
 
   const [viewState, setViewState] = useState<ViewState>({
-    longitude: 77.216721,
-    latitude: 28.6448,
+    longitude: selectedCoords?.lon ?? 77.216721,
+    latitude: selectedCoords?.lat ?? 28.6448,
     zoom: 7.5,
   });
 
@@ -42,13 +26,13 @@ export default function MapContainer() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getLocationDetails = useCallback(async () => {
+  const getLocationDetails = useCallback(async (lat: number, lon: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lon}`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
       );
 
       if (!response.ok) {
@@ -63,22 +47,36 @@ export default function MapContainer() {
     } finally {
       setIsLoading(false);
     }
-  }, [coords.lat, coords.lon]);
+  }, []);
 
   useEffect(() => {
-    getLocationDetails();
-  }, [getLocationDetails]);
+    if (selectedCoords) {
+      setCoords({
+        lat: selectedCoords.lat,
+        lon: selectedCoords.lon,
+      });
+      setViewState((prev) => ({
+        ...prev,
+        longitude: selectedCoords.lon,
+        latitude: selectedCoords.lat,
+      }));
+      // Fetch details for the new coordinates immediately
+      getLocationDetails(selectedCoords.lat, selectedCoords.lon);
+    }
+  }, [selectedCoords, getLocationDetails]);
 
   const handleMapClick = useCallback(
     ({ lngLat }: { lngLat: { lat: number; lng: number } }) => {
-      setCoords({ lat: lngLat.lat, lon: lngLat.lng });
+      const newCoords = { lat: lngLat.lat, lon: lngLat.lng };
+      setCoords(newCoords);
+      getLocationDetails(newCoords.lat, newCoords.lon);
     },
-    []
+    [getLocationDetails]
   );
 
   const handleMapMove = useCallback(
     ({ viewState: newViewState }: { viewState: ViewState }) => {
-      setViewState(newViewState); // This now preserves zoom level
+      setViewState(newViewState);
     },
     []
   );
