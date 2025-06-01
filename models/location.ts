@@ -9,3 +9,24 @@ export const newLocationSchema = z.object({
 });
 
 export type NewLocationSchema = z.infer<typeof newLocationSchema>;
+
+// Journey schema
+export const newJourneySchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  displayName: z.string().optional(),
+  latitude: z.string().min(1, { message: "Latitude is required" }),
+  longitude: z.string().min(1, { message: "Longitude is required" }),
+  country: z.string().min(1, { message: "Country is required" }),
+  countryCode: z.string().min(1, { message: "Country Code is required" }),
+  state: z.string().min(1, { message: "State is required" }),
+  region: z.string().optional(),
+  city: z.string().optional(),
+  village: z.string().optional(),
+  type: z.string().optional(),
+  notes: z.string().optional(),
+  tags: z.string().optional(),
+  photoUrls: z.string().optional(),
+  visitedAt: z.date({ message: "Visited Date is required" }),
+});
+
+export type NewJourneySchema = z.infer<typeof newJourneySchema>;

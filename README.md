@@ -4,6 +4,8 @@
 
 ### ToDo
 
+- [ ] Add Journey Status dropdown e.g like completed, ongoing, started
+
 - [x] Add Auth, Middleware
 
 - [x] Add Search bar to search the locations all over the world.
@@ -17,3 +19,9 @@
 - [x] Add Charts.
 
 - [ ] Unit Testing
+
+- [ ] Remove Bio from user model
+
+- [ ] Save the coordinates data when marker coords changes and persist them.
+
+- [ ] Pass the locations props to save journey form.

@@ -5,6 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState, useCallback } from "react";
 import MapPin from "@/public/map/pin.png";
 import { useStore } from "@/app/context/store";
+import SaveJourney from "../dashboard/locations/save-journey";
 
 export default function MapContainer() {
   // store
@@ -108,10 +109,16 @@ export default function MapContainer() {
           <p className="text-red-500">{error}</p>
         ) : locationDetails ? (
           <div>
-            <h3 className="font-semibold">Location Details</h3>
-            <p>{locationDetails.display_name || "Unknown location"}</p>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-lg">Location Details</h3>
+              {/* save journey */}
+              <SaveJourney />
+            </div>
+            <p className="text-sm line-clamp-2 text-muted-foreground">
+              {locationDetails.display_name || "Unknown location"}
+            </p>
             {locationDetails.address && (
-              <p>
+              <p className="text-muted-foreground">
                 {locationDetails.address.city &&
                   `${locationDetails.address.city}, `}
                 {locationDetails.address.state &&
@@ -119,7 +126,7 @@ export default function MapContainer() {
                 {locationDetails.address.country}
               </p>
             )}
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm font-bold mt-1">
               Coordinates: {coords.lat.toFixed(4)}, {coords.lon.toFixed(4)}
               <br />
               Zoom: {viewState.zoom.toFixed(2)}

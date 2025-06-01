@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import {
   Search,
   User,
@@ -12,6 +12,7 @@ import {
   Star,
   Clock,
   Plus,
+  Loader2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -34,13 +35,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 
 // Menu items with additional metadata
 const items = [
   {
     title: "Home",
-    url: "/",
+    url: "/dashboard",
     icon: Home,
     description: "Dashboard overview",
   },
@@ -89,6 +90,9 @@ export function AppSidebar() {
   const [openCollapsible, setOpenCollapsible] = useState<Set<string>>(
     new Set(["Locations"])
   );
+
+  // auth user
+  const { isLoaded, user, isSignedIn } = useUser();
 
   const handleItemClick = (title: string) => {
     setActiveItem(title);
@@ -214,30 +218,41 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-            JD
+      <Suspense
+        fallback={
+          <p>
+            <Loader2 className="animate-spin" />
+          </p>
+        }
+      >
+        <SidebarFooter className="border-t p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+              {user?.fullName?.charAt(0) ?? "U"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {user?.fullName ?? "Name"}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user?.primaryEmailAddress?.emailAddress ?? "Email"}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">John Doe</p>
-            <p className="text-xs text-muted-foreground truncate">
-              john@example.com
-            </p>
-          </div>
-        </div>
 
-        <div className="h-px bg-border mb-3" />
-        <SignOutButton>
-          <Button
-            variant="destructive"
-            className="w-full justify-center gap-2 font-medium"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </SignOutButton>
-      </SidebarFooter>
+          <div className="h-px bg-border mb-3" />
+          <SignOutButton>
+            <Button
+              disabled={!isLoaded}
+              variant="destructive"
+              className="w-full justify-center gap-2 font-medium"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </SignOutButton>
+        </SidebarFooter>
+      </Suspense>
     </Sidebar>
   );
 }
