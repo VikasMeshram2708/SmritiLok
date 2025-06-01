@@ -9,7 +9,7 @@ import SaveJourney from "../dashboard/locations/save-journey";
 
 export default function MapContainer() {
   // store
-  const { coords: selectedCoords } = useStore();
+  const { coords: selectedCoords, addCoords } = useStore();
 
   const [coords, setCoords] = useState<Coordinates>({
     lat: selectedCoords?.lat ?? 28.6448,
@@ -69,10 +69,11 @@ export default function MapContainer() {
   const handleMapClick = useCallback(
     ({ lngLat }: { lngLat: { lat: number; lng: number } }) => {
       const newCoords = { lat: lngLat.lat, lon: lngLat.lng };
+      addCoords(newCoords);
       setCoords(newCoords);
       getLocationDetails(newCoords.lat, newCoords.lon);
     },
-    [getLocationDetails]
+    [getLocationDetails, coords]
   );
 
   const handleMapMove = useCallback(

@@ -24,9 +24,9 @@ export const newJourneySchema = z.object({
   village: z.string().optional(),
   type: z.string().optional(),
   notes: z.string().optional(),
-  tags: z.string().optional(),
+  tags: z.array(z.string()),
   photoUrls: z.string().optional(),
-  visitedAt: z.date({ message: "Visited Date is required" }),
+  visitedAt: z.string().min(1, { message: "Visited Date is required" }),
 });
 
 export type NewJourneySchema = z.infer<typeof newJourneySchema>;

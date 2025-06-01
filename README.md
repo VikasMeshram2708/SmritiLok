@@ -25,3 +25,5 @@
 - [ ] Save the coordinates data when marker coords changes and persist them.
 
 - [ ] Pass the locations props to save journey form.
+
+- [ ] Use imageKit for media uploads.

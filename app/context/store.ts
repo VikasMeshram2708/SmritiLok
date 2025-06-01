@@ -9,13 +9,13 @@ type StoreState = {
   coords: Coords | null;
   addCoords: (coords: Coords) => void;
   removeCoords: () => void;
+  fetchCoords: () => Coords | null;
 };
 export const useStore = create<StoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       coords: { lon: 77.216721, lat: 28.6448 },
       addCoords: (coords) => {
-        // TODO: logic to save the lat && lng
         set(() => ({
           coords: {
             lat: coords.lat,
@@ -27,6 +27,7 @@ export const useStore = create<StoreState>()(
         set(() => ({
           coords: null,
         })),
+      fetchCoords: () => get().coords,
     }),
     {
       name: "smritiLok",
