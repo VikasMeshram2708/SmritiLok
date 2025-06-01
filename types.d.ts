@@ -13,7 +13,7 @@ interface NominatimResult {
   importance: number;
   addresstype: string;
   name: string;
-  display_name: string;
+  display_name: string?;
   address?: {
     house_number?: string;
     road?: string;

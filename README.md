@@ -6,6 +6,20 @@
 
 - [ ] Add Journey Status dropdown e.g like completed, ongoing, started
 
+- [ ] Search bar in recent page.
+
+- [ ] Remove the alert in search page.
+
+- [x] Remove Bio & Region from user model
+
+- [ ] Save the coordinates data when marker coords changes and persist them.
+
+- [ ] Pass the locations props to save journey form.
+
+- [x] Use imageKit for media uploads.
+
+- [ ] Unit Testing
+
 - [x] Add Auth, Middleware
 
 - [x] Add Search bar to search the locations all over the world.
@@ -17,13 +31,3 @@
 - [ ] Add marketing pages contact, about, Dashboard pages profile, settings.
 
 - [x] Add Charts.
-
-- [ ] Unit Testing
-
-- [ ] Remove Bio from user model
-
-- [ ] Save the coordinates data when marker coords changes and persist them.
-
-- [ ] Pass the locations props to save journey form.
-
-- [ ] Use imageKit for media uploads.

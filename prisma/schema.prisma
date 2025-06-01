@@ -20,7 +20,6 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false)
   role          UserRole @default(USER)
-  bio           String?
   picture       String?  @default("https://picsum.photos/400")
   password      String?
 
@@ -45,9 +44,7 @@ model Journey {
   country     String
   countryCode String
   state       String
-  region      String?
   city        String?
-  village     String?
 
   // categorization
   type  String?

@@ -28,22 +28,20 @@ import { useEffect, useTransition, useState } from "react";
 import { saveJourney } from "@/app/dal/actions";
 
 export default function SaveJourney() {
-  const { fetchCoords } = useStore();
+  const { locationDetails } = useStore();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<NewJourneySchema>({
     defaultValues: {
-      name: "",
-      displayName: "",
-      latitude: "",
-      longitude: "",
-      city: "",
-      village: "",
-      country: "",
-      countryCode: "",
-      region: "",
-      state: "",
-      type: "",
+      name: locationDetails?.name ?? "",
+      displayName: locationDetails?.display_name ?? "",
+      latitude: locationDetails?.lat ?? "",
+      longitude: locationDetails?.lon ?? "",
+      city: locationDetails?.address?.city ?? "",
+      country: locationDetails?.address?.country ?? "",
+      countryCode: locationDetails?.address?.country_code ?? "",
+      state: locationDetails?.address?.state ?? "",
+      type: locationDetails?.type ?? "",
       tags: [],
       notes: "",
       visitedAt: new Date().toISOString().split("T")[0], // formatted date string
@@ -70,15 +68,8 @@ export default function SaveJourney() {
   };
 
   useEffect(() => {
-    const result = fetchCoords();
-    console.log("Fetched coords:", result);
-
-    // Example: Pre-fill form fields with fetched data (if available)
-    // form.setValue("latitude", result?.lat ?? "");
-    // form.setValue("longitude", result?.lng ?? "");
-    // form.setValue("city", result?.city ?? "");
-    // etc.
-  }, [fetchCoords]);
+    console.log("Fetched coords:", locationDetails);
+  }, [locationDetails]);
 
   return (
     <Sheet>
@@ -181,35 +172,21 @@ export default function SaveJourney() {
                 />
               </div>
 
-              {/* Region + State */}
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="region"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input {...field} placeholder="Region" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input {...field} placeholder="State" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/*  State */}
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field} placeholder="State" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              {/* City + Village */}
+              {/* City  */}
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -223,33 +200,20 @@ export default function SaveJourney() {
                     </FormItem>
                   )}
                 />
+                {/* Visited At */}
                 <FormField
                   control={form.control}
-                  name="village"
+                  name="visitedAt"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="Village" />
+                        <Input type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-
-              {/* Visited At */}
-              <FormField
-                control={form.control}
-                name="visitedAt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               {/* Type + Tags */}
               <div className="grid grid-cols-2 gap-4">

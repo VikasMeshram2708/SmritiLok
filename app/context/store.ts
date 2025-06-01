@@ -6,14 +6,17 @@ type Coords = {
   lon: number;
 };
 type StoreState = {
+  locationDetails: NominatimResult | null;
   coords: Coords | null;
   addCoords: (coords: Coords) => void;
+  fillFormDetails: (data: NominatimResult) => void;
   removeCoords: () => void;
   fetchCoords: () => Coords | null;
 };
 export const useStore = create<StoreState>()(
   persist(
     (set, get) => ({
+      locationDetails: null,
       coords: { lon: 77.216721, lat: 28.6448 },
       addCoords: (coords) => {
         set(() => ({
@@ -28,6 +31,12 @@ export const useStore = create<StoreState>()(
           coords: null,
         })),
       fetchCoords: () => get().coords,
+      fillFormDetails: (data) => {
+        console.log("form-details", data);
+        set(() => ({
+          locationDetails: data,
+        }));
+      },
     }),
     {
       name: "smritiLok",
