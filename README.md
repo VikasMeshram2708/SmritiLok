@@ -8,15 +8,21 @@
 
 - [x] Clerk Auth
 
-- [ ] Add Breadcrumbs.
+- [x] Dynamic Route Page for journey.
 
-- [ ] Dynamic Route Page for journey.
+- [x] Db Integration with Prisma (Provider MongoDB)
 
-- [ ] Db Integration with Prisma (Provider MongoDB)
-
-  - [ ] User Model
+  - [x] User Model
     - name, email, picture, role, timestamps
-  - [ ] Journey Model
+  - [x] Journey Model
     - title, description, date, location, tags, notes, media file, timestamps
 
 - [ ] Media Upload 3rd party service (Imagekit, Cloudinary, Vercel Blog Storage any...)
+
+- [ ] Image full zoom preview when clicked in detailed page.
+
+## Stretch
+
+- [ ] If the notes length is less than 100 characters then use ai to generate 100 characters.
+
+<!-- 24ds -->

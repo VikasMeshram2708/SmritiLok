@@ -2,13 +2,8 @@
  * @returns This component returns all the journeys of the user
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import JourneyCards from "@/components/journeys/journey-cards";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -17,13 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import prisma from "@/lib/prisma";
+import { currentUser } from "@clerk/nextjs/server";
 import { Search } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 
-export default function JourneysPage() {
+export default async function JourneysPage() {
+  const user = await currentUser();
+  const journeys = await prisma.journey.findMany({
+    where: {
+      User: {
+        email: user?.primaryEmailAddress?.emailAddress ?? "",
+      },
+    },
+    take: 10,
+  });
+
   return (
-    <div className="bg-background min-h-screen py-10">
+    <div className="bg-background min-h-screen p-6">
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="space-y-2">
           <h2 className="text-2xl font-semibold">My Journeys</h2>
@@ -80,41 +85,7 @@ export default function JourneysPage() {
         </div>
 
         {/* Journey Cards Section */}
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 7 }).map((_, idx) => (
-            <Card
-              className="bg-transparent border-none outline-none p-0"
-              key={idx}
-            >
-              <CardContent className="p-0">
-                <div className="relative aspect-video">
-                  <Image
-                    src="https://picsum.photos/800/600"
-                    alt="journey title"
-                    fill
-                    priority
-                    className="rounded-md object-cover bg-contain hover:scale-105 hover:transition ease-in duration-300 hover:cursor-pointer"
-                  />
-                </div>
-              </CardContent>
-              <CardHeader className="p-0 bg-none -mt-2">
-                <CardTitle className="cursor-pointer hover:underline hover:underline-offset-4 leading-relaxed line-clamp-2 font-semibold">
-                  <Link href={`/journeys/${idx}`}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Facilis, minus?
-                  </Link>
-                </CardTitle>
-                <CardDescription>
-                  {new Date().toLocaleDateString("en-IN", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
-        </ul>
+        <JourneyCards journeys={journeys} />
       </div>
     </div>
   );
