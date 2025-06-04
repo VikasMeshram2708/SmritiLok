@@ -19,11 +19,18 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function JourneysPage() {
   return (
     <div className="bg-background min-h-screen py-10">
       <div className="max-w-5xl mx-auto space-y-6">
+        <header className="space-y-2">
+          <h2 className="text-2xl font-semibold">My Journeys</h2>
+          <p className="text-gray-500 text-sm">
+            Explore your past adventures and plan new ones.
+          </p>
+        </header>
         {/* Search bar */}
         <div className="text-muted-foreground bg-muted/30 px-4 py-2 rounded-sm relative flex-1">
           <Search
@@ -39,8 +46,8 @@ export default function JourneysPage() {
         {/* filter buttons */}
         <div className="flex items-center gap-4">
           <Select>
-            <SelectTrigger className="w-[100px] bg-muted/40 rounded-sm">
-              <SelectValue placeholder="Theme" />
+            <SelectTrigger className="w-[90px] bg-muted/40 rounded-sm">
+              <SelectValue placeholder="Date" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">Light</SelectItem>
@@ -50,8 +57,8 @@ export default function JourneysPage() {
           </Select>
           {/* Date */}
           <Select>
-            <SelectTrigger className="w-[80px] bg-muted/40 rounded-sm">
-              <SelectValue placeholder="Date" />
+            <SelectTrigger className="w-[110px] bg-muted/40 rounded-sm">
+              <SelectValue placeholder="Locations" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">Light</SelectItem>
@@ -61,8 +68,8 @@ export default function JourneysPage() {
           </Select>
           {/* Sort */}
           <Select>
-            <SelectTrigger className="w-[80px] bg-muted/40 rounded-sm">
-              <SelectValue placeholder="Sort" />
+            <SelectTrigger className="w-[90px] bg-muted/40 rounded-sm">
+              <SelectValue placeholder="Tags" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">Light</SelectItem>
@@ -91,9 +98,11 @@ export default function JourneysPage() {
                 </div>
               </CardContent>
               <CardHeader className="p-0 bg-none -mt-2">
-                <CardTitle className="hover:underline hover:underline-offset-4 leading-relaxed line-clamp-2 font-semibold">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Facilis, minus?
+                <CardTitle className="cursor-pointer hover:underline hover:underline-offset-4 leading-relaxed line-clamp-2 font-semibold">
+                  <Link href={`/journeys/${idx}`}>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Facilis, minus?
+                  </Link>
                 </CardTitle>
                 <CardDescription>
                   {new Date().toLocaleDateString("en-IN", {

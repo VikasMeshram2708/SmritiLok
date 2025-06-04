@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
         hostname: "picsum.photos",
         protocol: "https",
       },
+      {
+        hostname: "i.pravatar.cc",
+        protocol: "https",
+      },
+      {
+        hostname: "img.clerk.com",
+        protocol: "https",
+      },
     ],
   },
 };
