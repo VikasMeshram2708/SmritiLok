@@ -15,8 +15,8 @@
 - [ ] Db Integration with Prisma (Provider MongoDB)
 
   - [ ] User Model
-    - name, email, picture, role, createdAt, updatedAt
+    - name, email, picture, role, timestamps
   - [ ] Journey Model
-    - title, description, date, location, tags, notes, media file
+    - title, description, date, location, tags, notes, media file, timestamps
 
 - [ ] Media Upload 3rd party service (Imagekit, Cloudinary, Vercel Blog Storage any...)

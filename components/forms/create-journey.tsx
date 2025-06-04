@@ -106,36 +106,46 @@ export default function CreateJourney() {
     setMediaFile(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const tempId = crypto.randomUUID(); // Temporary ID
-    const previewUrl = mediaFile ? URL.createObjectURL(mediaFile) : undefined;
-
     const optimisticLog: JourneyEntry = {
       id: tempId,
       ...formData,
       tags,
-      mediaPreview: previewUrl,
+      mediaPreview: mediaFile ? URL.createObjectURL(mediaFile) : undefined,
     };
 
-    // Move optimistic update inside startTransition
     startTransition(async () => {
-      // Add optimistic update inside transition
       addOptimisticEntry(optimisticLog);
 
       try {
-        // Simulate or perform actual API call here
-        console.log("Submitted data:", {
-          ...formData,
-          tags,
-          mediaFile,
+        const response = await fetch("/api/journey/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            tags,
+            // For now, no file or media URL here
+            // mediaUrl:
+          }),
         });
 
-        // Optionally handle response and update optimistic state here
+        if (!response.ok) {
+          throw new Error("Failed to save journey");
+        }
+
+        // Optionally read response here
+        const json = await response.json();
+        console.log("json", json);
+        alert(json?.message ?? "Logged");
       } catch (error) {
-        alert("Failed to save journey: " + (error as Error).message);
-        // Optionally rollback optimistic update here
+        alert(
+          (error as Error).message ?? "Something went wrong. Please try again."
+        );
       } finally {
         resetForm();
       }

@@ -58,7 +58,7 @@ export default async function JourneyDetailPage({
         {/* notes section */}
         <article>
           <h2 className="text-2xl font-semibold">Notes</h2>
-          <p>
+          <p className="text-sm text-muted-foreground">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Velit
             aliquam quia, tempore aliquid quaerat ullam commodi qui hic,
             consequuntur minus eveniet optio blanditiis. At est quaerat soluta

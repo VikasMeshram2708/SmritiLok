@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+// Import env here to validate during build. Using jiti@^1 we can import .ts files :)
+
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
