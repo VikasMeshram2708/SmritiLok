@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { UploadCloud, X, Image, Video } from "lucide-react";
+import { UploadCloud, X, ImageIcon, VideoIcon } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState, useRef } from "react";
@@ -382,9 +383,9 @@ export default function CreateJourney() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   {selectedFile.type.startsWith("image/") ? (
-                    <Image className="w-5 h-5 text-green-600" />
+                    <ImageIcon className="w-5 h-5 text-green-600" />
                   ) : (
-                    <Video className="w-5 h-5 text-green-600" />
+                    <VideoIcon className="w-5 h-5 text-green-600" />
                   )}
                   <span className="text-sm font-medium text-green-800">
                     {selectedFile.name}
@@ -415,12 +416,20 @@ export default function CreateJourney() {
                   </div>
                 </div>
               )}
-
               {preview && selectedFile.type.startsWith("image/") && (
-                <img
+                <Image
                   src={preview}
                   alt="Preview"
+                  width={256}
+                  height={128}
                   className="max-w-full h-32 object-cover rounded-lg"
+                  style={{
+                    width: "100%",
+                    height: "8rem",
+                    objectFit: "cover",
+                    borderRadius: "0.5rem",
+                  }}
+                  unoptimized
                 />
               )}
 

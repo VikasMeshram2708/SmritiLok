@@ -2,17 +2,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Trash2, Info, HelpCircle, Settings } from "lucide-react";
+import { LogOut, Info, HelpCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { SignOutButton, useSession } from "@clerk/nextjs";
 
 export default function SettingsPage() {
   const { session } = useSession();
 
-  const handleDeleteAccount = () => {
-    // add delete logic
-    alert("Delete functionality coming soon.");
-  };
+  // const handleDeleteAccount = () => {
+  //   // add delete logic
+  //   alert("Delete functionality coming soon.");
+  // };
 
   return (
     <main className="max-w-2xl mx-auto py-8 px-4 space-y-6">
@@ -51,14 +51,14 @@ export default function SettingsPage() {
                 Log Out
               </Button>
             </SignOutButton>
-            <Button
+            {/* <Button
               onClick={handleDeleteAccount}
               className="flex-1"
               variant="destructive"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Account
-            </Button>
+            </Button> */}
           </div>
         </CardContent>
       </Card>

@@ -1,11 +1,10 @@
 import { Sparkle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function Navbar() {
   const { userId } = await auth();
-  const user = await currentUser();
   return (
     <nav className="bg-background">
       <div className="max-w-7xl mx-auto p-6 flex items-center justify-between">
@@ -20,7 +19,7 @@ export default async function Navbar() {
             </li>
           )}
           <li>
-            <Link href="/explore">Explore</Link>
+            <Link href="/terms">Terms</Link>
           </li>
           <li>
             <Link href="/about">About</Link>

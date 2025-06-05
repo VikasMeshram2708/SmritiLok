@@ -21,14 +21,10 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Suspense } from "react";
-import DeleteJourney from "./actions/delete-journey";
+import DeleteJourney from "./delete-journey";
 import { Button } from "../ui/button";
 
-export default async function JourneyCards({
-  journeys,
-}: {
-  journeys: JourneyResponse[];
-}) {
+export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
   return (
     <Suspense
       fallback={
@@ -39,7 +35,7 @@ export default async function JourneyCards({
       }
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {journeys?.map((journey) => (
+        {data?.map((journey) => (
           <Card
             className="bg-transparent border-none outline-none p-0"
             key={journey?.id}
@@ -51,7 +47,7 @@ export default async function JourneyCards({
                   alt="journey title"
                   fill
                   priority
-                  sizes="100vw"
+                  sizes="(max-width: 768px) 100vw, 400px"
                   className="rounded-md object-contain bg-secondary hover:scale-105 hover:transition ease-in duration-300 hover:cursor-pointer"
                 />
               </div>

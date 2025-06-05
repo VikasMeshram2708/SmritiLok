@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Github, Instagram, Twitter } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -9,32 +9,41 @@ export default function Footer() {
         {/* navigation links */}
         <ul className="flex flex-wrap justify-center items-center gap-6 sm:gap-12 md:gap-20 lg:gap-44 text-sm text-gray-500 font-semibold">
           <li>
-            <Link href="/">About</Link>
+            <Link href="/about">About</Link>
           </li>
           <li>
-            <Link href="/">Contact</Link>
+            <Link href="/contact">Contact</Link>
           </li>
           <li>
-            <Link href="/">FAQs</Link>
+            <Link href="/faqs">FAQs</Link>
           </li>
           <li>
-            <Link href="/">Terms</Link>
+            <Link href="/terms">Terms</Link>
           </li>
           <li>
-            <Link href="/">Privacy</Link>
+            <Link href="/privacy">Privacy</Link>
           </li>
         </ul>
 
         {/* Social button */}
         <ul className="flex items-center gap-4">
           <Button variant={"ghost"} size="icon" aria-label="Twitter">
-            <Twitter />
+            <Link href="https://x.com/mevikas1008" target="_blank">
+              <Twitter />
+            </Link>
           </Button>
           <Button variant={"ghost"} size="icon" aria-label="Instagram">
-            <Instagram />
+            <Link
+              href="https://www.linkedin.com/in/vikas-meshram"
+              target="_blank"
+            >
+              <Instagram />
+            </Link>
           </Button>
           <Button variant={"ghost"} size="icon" aria-label="Facebook">
-            <Facebook />
+            <Link href="https://github.com/VikasMeshram2708" target="_blank">
+              <Github />
+            </Link>
           </Button>
         </ul>
 

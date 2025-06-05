@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { LogOut, Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import { LogOut } from "lucide-react";
 
 const dummyUser = {
   name: "Vikas the Voyager",
@@ -15,7 +15,7 @@ const dummyUser = {
 };
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(dummyUser);
+  const user = dummyUser;
 
   useEffect(() => {
     // Fetch real user data if needed
@@ -26,12 +26,12 @@ export default function ProfilePage() {
     // Add logout logic
   };
 
-  const handleDeleteAccount = () => {
-    if (confirm("Are you sure? This will permanently delete your account.")) {
-      console.log("Deleting account...");
-      // Add delete logic
-    }
-  };
+  // const handleDeleteAccount = () => {
+  //   if (confirm("Are you sure? This will permanently delete your account.")) {
+  //     console.log("Deleting account...");
+  //     // Add delete logic
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-zinc-100 py-12 px-4 flex justify-center items-start">
@@ -67,14 +67,14 @@ export default function ProfilePage() {
                 Log Out
               </Button>
 
-              <Button
+              {/* <Button
                 onClick={handleDeleteAccount}
                 className="flex-1 flex items-center justify-center gap-2"
                 variant="destructive"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete Account
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardContent>

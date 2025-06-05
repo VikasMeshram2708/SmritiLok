@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
         hostname: "ik.imagekit.io",
         protocol: "https",
       },
+      {
+        hostname: "images.unsplash.com",
+        protocol: "https",
+      },
     ],
   },
 };

@@ -1,4 +1,4 @@
-# Smriti Lok
+# Smriti Lok [https://smriti-lok.vercel.app/]
 
 ## User in DB
 
@@ -32,5 +32,7 @@
     - title, description, date, location, tags, notes, media file, timestamps
 
 ## Stretch
+
+- [ ] Delete User Account
 
 - [ ] If the notes length is less than 100 characters then use ai to generate 100 characters.
