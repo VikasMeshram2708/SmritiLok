@@ -17,9 +17,9 @@ export default function PrivacyPage() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">1. Introduction</h2>
             <p className="text-muted-foreground">
-              Smriti Lok ("we", "us", or "our") respects your privacy. This
-              policy explains how we collect, use, disclose, and safeguard your
-              information when you use our journaling platform.
+              Smriti Lok ({"we"}, {"us"}, or {"our"}) respects your privacy.
+              This policy explains how we collect, use, disclose, and safeguard
+              your information when you use our journaling platform.
             </p>
           </section>
 
@@ -134,10 +134,10 @@ export default function PrivacyPage() {
           <Separator />
 
           <section className="space-y-3">
-            <h2 className="text-xl font-semibold">8. Children's Privacy</h2>
+            <h2 className="text-xl font-semibold">8. {"Children's"} Privacy</h2>
             <p className="text-muted-foreground">
-              Our service is not intended for users under 16. We don't knowingly
-              collect data from children.
+              Our service is not intended for users under 16. We {"don't"}{" "}
+              knowingly collect data from children.
             </p>
           </section>
 
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">9. Policy Updates</h2>
             <p className="text-muted-foreground">
-              We may update this policy periodically. We'll notify users of
+              We may update this policy periodically. {"We'll"} notify users of
               significant changes via email at least 30 days before changes take
               effect.
             </p>

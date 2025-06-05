@@ -94,9 +94,9 @@ export default function AboutPage() {
                 storytelling.
               </p>
               <p>
-                Today, we're a diverse team of technologists, designers, and
-                storytellers united by one belief: Your life's journey deserves
-                to be remembered in its full richness.
+                Today, {"we're"} a diverse team of technologists, designers, and
+                storytellers united by one belief: Your {"life's"} journey
+                deserves to be remembered in its full richness.
               </p>
               <p>
                 In 2025, we introduced AI-assisted reflection tools that help

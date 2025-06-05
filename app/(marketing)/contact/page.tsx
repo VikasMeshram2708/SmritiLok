@@ -13,8 +13,8 @@ export default function ContactPage() {
             Contact Us
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have questions or feedback? We'd love to hear from you. Reach out
-            through any of these channels.
+            Have questions or feedback? {"We'd"} love to hear from you. Reach
+            out through any of these channels.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Contact Information</h2>
               <p className="text-muted-foreground">
-                We're here to help with any questions about Smriti Lok.
+                {"We're"} here to help with any questions about Smriti Lok.
               </p>
             </div>
 

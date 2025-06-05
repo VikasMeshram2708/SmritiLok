@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -12,7 +13,7 @@ export default function Home() {
               <span className="text-indigo-600">Forever</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Smriti Lok is the most beautiful way to document your life's
+              Smriti Lok is the most beautiful way to document your {"life's"}
               journey. Capture memories, reflections, and growth in one secure
               place.
             </p>
@@ -42,14 +43,20 @@ export default function Home() {
             <div className="mt-8 flex items-center">
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((item) => (
-                  <img
+                  <div
                     key={item}
-                    src={`https://randomuser.me/api/portraits/${
-                      item % 2 === 0 ? "women" : "men"
-                    }/${item}0.jpg`}
-                    className="w-10 h-10 rounded-full border-2 border-white"
-                    alt="User"
-                  />
+                    className="w-10 h-10 rounded-full border-2 border-white relative overflow-hidden"
+                  >
+                    <Image
+                      src={`https://randomuser.me/api/portraits/${
+                        item % 2 === 0 ? "women" : "men"
+                      }/${item}0.jpg`}
+                      alt="User"
+                      width={40}
+                      height={40}
+                      className="object-cover"
+                    />
+                  </div>
                 ))}
               </div>
               <div className="ml-4">
@@ -79,11 +86,13 @@ export default function Home() {
               <div className="absolute -top-6 -left-6 w-64 h-64 bg-indigo-100 rounded-2xl"></div>
               <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-blue-100 rounded-2xl"></div>
               <div className="relative bg-white p-2 rounded-xl shadow-xl border border-gray-100">
-                <div className="bg-gray-50 rounded-lg overflow-hidden">
-                  <img
+                <div className="bg-gray-50 rounded-lg overflow-hidden relative aspect-video">
+                  <Image
                     src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-                    className="w-full h-auto"
                     alt="Journey example"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
                 <div className="p-4">
@@ -234,8 +243,8 @@ export default function Home() {
               Loved by Journey Keepers Worldwide
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Don't just take our word for it. Here's what our users say about
-              Smriti Lok.
+              {"Don't"} just take our word for it. {"Here's"} what our users say
+              about Smriti Lok.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
@@ -270,14 +279,18 @@ export default function Home() {
                   ))}
                 </div>
                 <blockquote className="text-lg text-gray-700 mb-6">
-                  "{testimonial.quote}"
+                  `${testimonial.quote}`
                 </blockquote>
                 <div className="flex items-center">
-                  <img
-                    src={testimonial.avatar}
-                    className="w-12 h-12 rounded-full mr-4"
-                    alt={testimonial.name}
-                  />
+                  <div className="w-12 h-12 rounded-full relative overflow-hidden mr-4">
+                    <Image
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
+                  </div>
                   <div>
                     <p className="font-medium text-gray-900">
                       {testimonial.name}

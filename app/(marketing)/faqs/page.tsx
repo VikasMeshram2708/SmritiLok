@@ -4,8 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 export default function FAQPage() {
@@ -45,8 +43,8 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Find answers to common questions about Smriti Lok. Can't find what
-            you're looking for? Contact our support team.
+            Find answers to common questions about Smriti Lok. {"Can't"} find
+            what {"you're"} looking for? Contact our support team.
           </p>
         </div>
 

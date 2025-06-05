@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export default function TermsPage() {
@@ -17,8 +16,8 @@ export default function TermsPage() {
           <div>
             <h2 className="text-xl font-semibold">1. Acceptance of Terms</h2>
             <p className="text-base leading-relaxed">
-              By accessing or using Smriti Lok ("Service"), you agree to be
-              bound by these Terms of Service ("Terms"). If you disagree with
+              By accessing or using Smriti Lok ({"Service"}), you agree to be
+              bound by these Terms of Service ({"Terms"}). If you disagree with
               any part, you may not access the Service.
             </p>
           </div>
@@ -97,9 +96,9 @@ export default function TermsPage() {
           <div>
             <h2 className="text-xl font-semibold">8. Disclaimers</h2>
             <p className="text-base leading-relaxed">
-              The Service is provided "as-is" without warranties of any kind. We
-              do not guarantee uninterrupted or error-free operation. Some
-              jurisdictions don't allow certain disclaimers, so they may not
+              The Service is provided {"as-is"} without warranties of any kind.
+              We do not guarantee uninterrupted or error-free operation. Some
+              jurisdictions {"don't"} allow certain disclaimers, so they may not
               apply to you.
             </p>
           </div>
@@ -126,7 +125,7 @@ export default function TermsPage() {
           <div>
             <h2 className="text-xl font-semibold">11. Changes to Terms</h2>
             <p className="text-base leading-relaxed">
-              We may modify these Terms at any time. We'll notify users of
+              We may modify these Terms at any time. {"We'll"} notify users of
               significant changes via email or in-app notification. Continued
               use after changes constitutes acceptance.
             </p>
