@@ -6,7 +6,9 @@
 
 ## Todo
 
-- [x] Add Image Upload feature.
+- [x] Reject media file other than image/video and image size should not be greater than 5 mb and video file should not be greater than 10mb.
+
+- [ ] Add pagination in /journeys page.
 
 - [ ] Add images in metadata in detailed page
 
@@ -15,6 +17,8 @@
 - [ ] Search-bar integrated with open-streets api for locations search.
 
 - [ ] Image full screen image preview when clicked in detailed page.
+
+- [x] Add Image Upload feature.
 
 - [x] Clerk Auth
 

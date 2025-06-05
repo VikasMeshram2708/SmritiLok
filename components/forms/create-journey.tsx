@@ -69,7 +69,29 @@ export default function CreateJourney() {
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      handleFileSelect(files[0]);
+      const file = files[0];
+      const isImage = file.type.startsWith("image/");
+      const isVideo = file.type.startsWith("video/");
+
+      if (!isImage && !isVideo) {
+        alert("Only image or video files are allowed.");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      if (isImage && file.size > 5 * 1024 * 1024) {
+        alert("Image size must be less than 5 MB.");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      if (isVideo && file.size > 10 * 1024 * 1024) {
+        alert("Video size must be less than 10 MB.");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      handleFileSelect(file);
     }
   };
 
@@ -244,6 +266,7 @@ export default function CreateJourney() {
             Date <span className="text-red-500">*</span>
           </label>
           <input
+            defaultValue={new Date().toISOString().slice(0, 10)}
             {...register("date", { required: "Date is required" })}
             type="date"
             className="bg-muted/50 rounded p-2 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"

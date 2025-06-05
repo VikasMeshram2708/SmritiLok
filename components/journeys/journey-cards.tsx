@@ -13,13 +13,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Link from "next/link";
-import {
-  EllipsisVertical,
-  Loader2,
-  Share2,
-  SquarePen,
-  Trash2Icon,
-} from "lucide-react";
+import { EllipsisVertical, Loader2, Share2, SquarePen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Suspense } from "react";
+import DeleteJourney from "./actions/delete-journey";
+import { Button } from "../ui/button";
 
 export default async function JourneyCards({
   journeys,
@@ -55,7 +51,8 @@ export default async function JourneyCards({
                   alt="journey title"
                   fill
                   priority
-                  className="rounded-md object-cover bg-contain hover:scale-105 hover:transition ease-in duration-300 hover:cursor-pointer"
+                  sizes="100vw"
+                  className="rounded-md object-contain bg-secondary hover:scale-105 hover:transition ease-in duration-300 hover:cursor-pointer"
                 />
               </div>
             </CardContent>
@@ -79,16 +76,20 @@ export default async function JourneyCards({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>
-                      <Share2 />
-                      Share
+                      <Button variant={"ghost"}>
+                        <Share2 />
+                        Share
+                      </Button>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <SquarePen />
-                      Edit
+                      <Button variant={"ghost"}>
+                        <SquarePen />
+                        Edit
+                      </Button>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Trash2Icon />
-                      Delete
+                    <DropdownMenuItem asChild>
+                      {/* Delete button */}
+                      <DeleteJourney journeyId={journey?.id} />
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

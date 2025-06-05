@@ -1,5 +1,5 @@
 /**
- * @returns This component returns all the journeys of the user
+ * This component returns all the journeys of the user
  */
 
 import JourneyCards from "@/components/journeys/journey-cards";
@@ -36,8 +36,7 @@ export async function generateStaticParams() {
 export default async function JourneysPage() {
   const user = await currentUser();
   const email = user?.primaryEmailAddress?.emailAddress ?? "";
-  console.log("user", email);
-  // count journeys
+
   const journeyCount = await prisma.journey.count({
     where: {
       User: {
@@ -53,17 +52,17 @@ export default async function JourneysPage() {
     },
     take: 10,
   });
-  console.log("j", journeys);
   return (
     <div className="bg-background min-h-screen p-6">
       <div className="max-w-5xl mx-auto space-y-6">
+        {/* journey header */}
         <header className="space-y-2">
           <h2 className="text-2xl font-semibold">My Journeys</h2>
           <p className="text-gray-500 text-sm">
             Explore your past adventures and plan new ones.
           </p>
         </header>
-        {/* Search bar */}
+        {/* journey Search bar */}
         <div className="text-muted-foreground bg-muted/30 px-4 py-2 rounded-sm relative flex-1">
           <Search
             className="absolute text-sm left-8 top-1/2 -translate-y-1/2 text-muted-foreground"

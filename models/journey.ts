@@ -44,3 +44,9 @@ export const journeySchema = z
   .strict();
 
 export type JourneySchema = z.infer<typeof journeySchema>;
+
+// delete journey schema
+export const deleteJourneySchema = z.object({
+  journeyId: z.string(),
+});
+export type DeleteJourneySchema = z.infer<typeof deleteJourneySchema>;

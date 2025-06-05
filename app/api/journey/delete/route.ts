@@ -1,17 +1,17 @@
 /**
- * This is api to create new journey logs.
+ * This is api to delete new journey logs.
  */
 "use server";
 
 import { rateLimit } from "@/lib/limiter";
 import prisma from "@/lib/prisma";
-import { journeySchema } from "@/models/journey";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { deleteJourneySchema } from "@/models/journey";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { NextRequest } from "next/server";
 import * as z from "zod/v4";
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   try {
     // rate limit
     const limitResponse = await rateLimit(req);
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
 
     // validate auth
     const { userId } = await auth();
-    const authUser = await currentUser();
 
     // unauthorized error
     if (!userId) {
@@ -30,10 +29,10 @@ export async function POST(req: NextRequest) {
     }
 
     // validate schema
-    const parsed = journeySchema.safeParse(data);
+    const parsed = deleteJourneySchema.safeParse(data);
 
     if (!parsed.success) {
-      const err = parsed.error.flatten().fieldErrors;
+      const err = parsed.error ? z.treeifyError(parsed.error) : undefined;
 
       return new Response(JSON.stringify({ success: false, message: err }), {
         headers: {
@@ -43,62 +42,23 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // check user is registered or not
-    const userExists = await prisma.user.findUnique({
+    const { journeyId } = parsed.data;
+
+    // delete the journey log
+    await prisma.journey.delete({
       where: {
-        email: authUser?.primaryEmailAddress?.emailAddress ?? "",
-      },
-    });
-
-    const {
-      title,
-      date,
-      location,
-      description,
-      media,
-      mediaType,
-      notes,
-      tags,
-    } = parsed.data;
-
-    if (!userExists) {
-      // if no then save it
-      await prisma.user.create({
-        data: {
-          email: authUser?.primaryEmailAddress?.emailAddress ?? "",
-          name: authUser?.fullName ?? "",
-          picture: authUser?.imageUrl ?? "",
-        },
-      });
-    }
-
-    // save the journey log
-    await prisma.journey.create({
-      data: {
-        title,
-        date,
-        location,
-        description,
-        media: media ?? null,
-        mediaType,
-        notes,
-        tags,
-        User: {
-          connect: {
-            email: authUser?.primaryEmailAddress?.emailAddress ?? "",
-          },
-        },
+        id: journeyId,
       },
     });
 
     // revalidate the path
-    revalidatePath("/journeys/**");
+    revalidatePath("/journeys");
 
     // return the response
     return new Response(
       JSON.stringify({
         success: false,
-        message: "Journey logged",
+        message: "Journey Deleted",
       }),
       {
         headers: {
