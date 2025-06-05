@@ -1,184 +1,240 @@
 "use client";
 
-import { useRef, useState, useTransition, useOptimistic } from "react";
 import { Button } from "@/components/ui/button";
-import { LoaderCircle, UploadCloud, X } from "lucide-react";
+import { UploadCloud, X, Image, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-
-type JourneyEntry = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  notes: string;
-  tags: string[];
-  mediaPreview?: string;
-};
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useState, useRef } from "react";
+import { authenticator } from "@/lib/authenticator";
+import {
+  ImageKitAbortError,
+  ImageKitInvalidRequestError,
+  ImageKitServerError,
+  ImageKitUploadNetworkError,
+  upload,
+} from "@imagekit/next";
 
 export default function CreateJourney() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  // Optimistic list of journey entries
-  const [optimisticEntries, addOptimisticEntry] = useOptimistic<
-    JourneyEntry[],
-    JourneyEntry
-  >([], (prev, newEntry) => [...prev, newEntry]);
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: new Date().toISOString().split("T")[0],
-    location: "",
-    notes: "",
-  });
-
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<JourneySchema>();
+
+  // Handle file selection
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Set media type based on file type
+    const mediaType = file.type.startsWith("image/") ? "IMAGE" : "VIDEO";
+    setValue("mediaType", mediaType);
+    setValue("media", file.name);
   };
 
-  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === " " && tagInput.trim()) {
+  // Handle drag and drop
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if (
+      files.length > 0 &&
+      (files[0].type.startsWith("image/") || files[0].type.startsWith("video/"))
+    ) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  // Handle file input change
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  // Handle tag input
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
-      if (tags.length < 10) {
-        const newTags = [...tags, tagInput.trim()];
+      const newTag = tagInput.trim();
+      if (newTag && !tags.includes(newTag) && tags.length < 10) {
+        const newTags = [...tags, newTag];
         setTags(newTags);
+        setValue("tags", newTags);
         setTagInput("");
       }
     }
   };
 
-  const removeTag = (index: number) => {
-    setTags(tags.filter((_, i) => i !== index));
+  // Remove tag
+  const removeTag = (indexToRemove: number) => {
+    const newTags = tags.filter((_, index) => index !== indexToRemove);
+    setTags(newTags);
+    setValue("tags", newTags);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setMediaFile(file);
-      console.log("Dropped file:", file);
+  // Remove selected file
+  const removeFile = () => {
+    setSelectedFile(null);
+    setPreview(null);
+    setValue("media", "");
+    setValue("mediaType", undefined);
+    setProgress(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    // Abort any ongoing upload
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  const onSubmit: SubmitHandler<JourneySchema> = async (data) => {
+    if (!selectedFile) {
+      alert("Please select a media file");
+      return;
+    }
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+    try {
+      setIsUploading(true);
+      setProgress(0);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMediaFile(file);
-      console.log("Selected file:", file);
+      // Create new abort controller
+      abortControllerRef.current = new AbortController();
+
+      // Get ImageKit authentication parameters
+      const authParams = await authenticator();
+      const { signature, expire, token, publicKey } = authParams;
+
+      // Upload to ImageKit
+      const uploadResponse = await upload({
+        file: selectedFile,
+        fileName: selectedFile.name,
+        folder: "smritiLok",
+        expire,
+        token,
+        signature,
+        publicKey,
+        onProgress: (event) => {
+          const progressPercent = (event.loaded / event.total) * 100;
+          setProgress(progressPercent);
+        },
+        abortSignal: abortControllerRef.current.signal,
+      });
+
+      if (!uploadResponse.url) {
+        throw new Error("ImageKit upload failed");
+      }
+
+      // Now include the uploaded media URL in the form submission
+      const response = await fetch("/api/journey/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          media: uploadResponse.url,
+          mediaType: selectedFile.type.startsWith("image/") ? "IMAGE" : "VIDEO",
+          tags,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save journey data to the server.");
+      }
+
+      alert("Journey created successfully!");
+      handleReset();
+      // redirect to journeys page
+    } catch (error) {
+      console.error("Upload error:", error);
+
+      if (error instanceof ImageKitAbortError) {
+        alert("Upload was cancelled");
+      } else if (error instanceof ImageKitInvalidRequestError) {
+        alert("Invalid upload request: " + error.message);
+      } else if (error instanceof ImageKitUploadNetworkError) {
+        alert("Network error during upload: " + error.message);
+      } else if (error instanceof ImageKitServerError) {
+        alert("Server error during upload: " + error.message);
+      } else {
+        alert("Upload failed. Please try again.");
+      }
+    } finally {
+      setIsUploading(false);
+      setProgress(0);
     }
   };
 
-  const openFilePicker = () => {
-    fileInputRef.current?.click();
-  };
-
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      description: "",
-      date: new Date().toISOString().split("T")[0],
-      location: "",
-      notes: "",
-    });
+  const handleReset = () => {
+    reset();
+    setSelectedFile(null);
+    setPreview(null);
     setTags([]);
     setTagInput("");
-    setMediaFile(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const tempId = crypto.randomUUID(); // Temporary ID
-    const optimisticLog: JourneyEntry = {
-      id: tempId,
-      ...formData,
-      tags,
-      mediaPreview: mediaFile ? URL.createObjectURL(mediaFile) : undefined,
-    };
-
-    startTransition(async () => {
-      addOptimisticEntry(optimisticLog);
-
-      try {
-        const response = await fetch("/api/journey/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            tags,
-            // For now, no file or media URL here
-            // mediaUrl:
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to save journey");
-        }
-
-        // Optionally read response here
-        const json = await response.json();
-        console.log("json", json);
-        alert(json?.message ?? "Logged");
-      } catch (error) {
-        alert(
-          (error as Error).message ?? "Something went wrong. Please try again."
-        );
-      } finally {
-        resetForm();
-      }
-    });
+    setProgress(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    // Abort any ongoing upload
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Create New Journey</h1>
+
+      <div className="space-y-6">
         {/* Title */}
         <div>
           <label className="block font-medium text-sm mb-1">
             Title <span className="text-red-500">*</span>
           </label>
           <input
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
+            {...register("title", { required: "Title is required" })}
             placeholder="Exploring the Eiffel Tower"
-            className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full"
-            required
+            className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isUploading}
           />
+          {errors.title && (
+            <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+          )}
         </div>
 
         {/* Description */}
         <div>
           <label className="block font-medium text-sm mb-1">Description</label>
           <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
+            {...register("description")}
             placeholder="A beautiful day walking around the Champs-Élysées..."
-            className="bg-muted/50 rounded p-5 max-w-lg w-full"
+            className="bg-muted/50 rounded p-4 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            maxLength={500}
+            rows={3}
+            disabled={isUploading}
           />
         </div>
 
@@ -188,13 +244,14 @@ export default function CreateJourney() {
             Date <span className="text-red-500">*</span>
           </label>
           <input
-            name="date"
+            {...register("date", { required: "Date is required" })}
             type="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="bg-muted/50 rounded p-2 max-w-lg w-full"
-            required
+            className="bg-muted/50 rounded p-2 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isUploading}
           />
+          {errors.date && (
+            <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
+          )}
         </div>
 
         {/* Location */}
@@ -203,13 +260,17 @@ export default function CreateJourney() {
             Location <span className="text-red-500">*</span>
           </label>
           <input
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
+            {...register("location", { required: "Location is required" })}
             placeholder="Paris, France"
-            className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full"
-            required
+            className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            maxLength={800}
+            disabled={isUploading}
           />
+          {errors.location && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.location.message}
+            </p>
+          )}
         </div>
 
         {/* Tags */}
@@ -217,30 +278,37 @@ export default function CreateJourney() {
           <label className="block font-medium text-sm mb-1">
             Tags <span className="text-gray-500">(press space to add)</span>
           </label>
-          <input
-            type="text"
-            className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full"
-            placeholder="romantic travel beach"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleTagInput}
-          />
-          <div className="mt-2 flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
-              <div
-                key={index}
-                className="px-2 py-1 bg-muted-foreground text-xs rounded-full flex items-center space-x-1 text-white"
-              >
-                <span>{tag}</span>
-                <button
-                  type="button"
-                  onClick={() => removeTag(index)}
-                  className="hover:text-red-300"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              className="bg-muted/50 rounded px-4 py-2 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="romantic travel beach"
+              maxLength={50}
+              disabled={isUploading}
+            />
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(index)}
+                      className="hover:bg-blue-200 rounded-full p-0.5"
+                      disabled={isUploading}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -248,113 +316,137 @@ export default function CreateJourney() {
         <div>
           <label className="block font-medium text-sm mb-1">Notes</label>
           <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
+            {...register("notes")}
             placeholder="Saw an amazing street performance at Times Square."
             rows={4}
-            className="bg-muted/50 rounded p-5 max-w-lg w-full"
+            className="bg-muted/50 rounded p-4 max-w-lg w-full border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            maxLength={500}
+            disabled={isUploading}
           />
         </div>
 
         {/* Media Upload */}
         <div>
-          <label className="block font-medium text-sm mb-1">Media File</label>
-          <div
-            onClick={openFilePicker}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            className={cn(
-              "flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer bg-muted/30",
-              isDragging ? "border-primary bg-muted/40" : "border-muted"
-            )}
-          >
-            <UploadCloud className="w-10 h-10 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground">
-              Drag & drop your image here or{" "}
-              <span className="underline">browse</span>
-            </p>
-            {mediaFile && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Selected: {mediaFile.name}
+          <label className="block font-medium text-sm mb-1">
+            Media File <span className="text-red-500">*</span>
+          </label>
+
+          {!selectedFile ? (
+            <div
+              className={cn(
+                "flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer bg-muted/30 hover:bg-muted/50",
+                "border-muted hover:border-blue-300",
+                isUploading && "opacity-50 cursor-not-allowed"
+              )}
+              onClick={() => !isUploading && fileInputRef.current?.click()}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              role="button"
+              tabIndex={0}
+              aria-label="Media upload area"
+            >
+              <UploadCloud className="w-10 h-10 text-muted-foreground mb-2" />
+              <p className="text-sm text-muted-foreground text-center">
+                Drag & drop your image or video here or{" "}
+                <span className="underline text-blue-600">browse</span>
               </p>
-            )}
-          </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Supports images and videos
+              </p>
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-green-300 bg-green-50 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  {selectedFile.type.startsWith("image/") ? (
+                    <Image className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <Video className="w-5 h-5 text-green-600" />
+                  )}
+                  <span className="text-sm font-medium text-green-800">
+                    {selectedFile.name}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={removeFile}
+                  className="text-red-500 hover:text-red-700 p-1"
+                  disabled={isUploading}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Progress bar */}
+              {isUploading && (
+                <div className="mb-2">
+                  <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>Uploading...</span>
+                    <span>{Math.round(progress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              {preview && selectedFile.type.startsWith("image/") && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="max-w-full h-32 object-cover rounded-lg"
+                />
+              )}
+
+              {preview && selectedFile.type.startsWith("video/") && (
+                <video
+                  src={preview}
+                  className="max-w-full h-32 object-cover rounded-lg"
+                  controls
+                />
+              )}
+            </div>
+          )}
+
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
+            onChange={handleFileInputChange}
             className="hidden"
-            onChange={handleFileChange}
+            aria-label="Select media file"
+            disabled={isUploading}
           />
+          {errors.media && (
+            <p className="text-red-500 text-sm mt-1">Media file is required</p>
+          )}
         </div>
-
-        {/* Show selected media file preview */}
-        {mediaFile && (
-          <Image
-            src={URL.createObjectURL(mediaFile)}
-            alt={formData.title}
-            width={300}
-            height={150}
-            className="w-auto h-auto rounded object-cover mt-4"
-          />
-        )}
 
         {/* Submit */}
-        <div>
-          <Button type="submit" size={"lg"} disabled={isPending}>
-            {isPending ? <LoaderCircle className="animate-spin" /> : "Save"}
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            size="lg"
+            className="px-8"
+            onClick={handleSubmit(onSubmit)}
+            disabled={isUploading || !selectedFile}
+          >
+            {isUploading ? "Uploading..." : "Save Journey"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={handleReset}
+            disabled={isUploading}
+          >
+            Reset
           </Button>
         </div>
-      </form>
-
-      {/* Optimistic Entries Preview */}
-      {optimisticEntries.length > 0 && (
-        <section className="mt-12 max-w-xl mx-auto space-y-6">
-          <h2 className="text-xl font-semibold">Your Recent Journey Logs</h2>
-          {optimisticEntries.map((entry) => (
-            <div
-              key={entry.id}
-              className="p-4 border rounded-lg shadow bg-white dark:bg-gray-800"
-            >
-              <h3 className="font-semibold text-lg">{entry.title}</h3>
-              <p className="text-sm text-muted-foreground">
-                {entry.description}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {entry.date} — {entry.location}
-              </p>
-              {entry.mediaPreview && (
-                <Image
-                  src={entry.mediaPreview}
-                  alt={entry.title}
-                  width={300}
-                  height={150}
-                  className="rounded mt-2 object-cover"
-                />
-              )}
-              {entry.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {entry.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-1 bg-muted-foreground text-xs rounded-full text-white"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {entry.notes && (
-                <p className="mt-2 text-sm italic text-muted-foreground">
-                  Notes: {entry.notes}
-                </p>
-              )}
-            </div>
-          ))}
-        </section>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

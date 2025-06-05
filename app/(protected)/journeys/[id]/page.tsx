@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import { ChevronLeft, Dot, Loader2 } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,6 +12,28 @@ import { Suspense } from "react";
 type JourneyDetailPageParams = {
   params: Promise<{ id: string }>;
 };
+
+// generate metadata
+export async function generateMetadata({
+  params,
+}: JourneyDetailPageParams): Promise<Metadata> {
+  const { id } = await params;
+  const journey = await prisma.journey.findUnique({
+    where: {
+      id: decodeURIComponent(id) ?? "",
+    },
+  });
+
+  return {
+    title: journey?.title ?? "Title",
+    description: journey?.description ?? "Description",
+    openGraph: {
+      title: journey?.title ?? "Title",
+      description: journey?.description ?? "Description",
+      // TODO: Add images
+    },
+  };
+}
 export default async function JourneyDetailPage({
   params,
 }: JourneyDetailPageParams) {
@@ -21,6 +44,7 @@ export default async function JourneyDetailPage({
     },
   });
 
+  if (!id) notFound();
   if (!journey) notFound();
   return (
     <div className="min-h-screen bg-background p-6">

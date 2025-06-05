@@ -16,7 +16,8 @@ import prisma from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { Search } from "lucide-react";
 
-export default async function JourneysPage() {
+// Static params function
+export async function generateStaticParams() {
   const user = await currentUser();
   const journeys = await prisma.journey.findMany({
     where: {
@@ -27,6 +28,32 @@ export default async function JourneysPage() {
     take: 10,
   });
 
+  return journeys?.map((journey) => ({
+    id: journey?.id,
+  }));
+}
+
+export default async function JourneysPage() {
+  const user = await currentUser();
+  const email = user?.primaryEmailAddress?.emailAddress ?? "";
+  console.log("user", email);
+  // count journeys
+  const journeyCount = await prisma.journey.count({
+    where: {
+      User: {
+        email,
+      },
+    },
+  });
+  const journeys = await prisma.journey.findMany({
+    where: {
+      User: {
+        email,
+      },
+    },
+    take: 10,
+  });
+  console.log("j", journeys);
   return (
     <div className="bg-background min-h-screen p-6">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -85,7 +112,14 @@ export default async function JourneysPage() {
         </div>
 
         {/* Journey Cards Section */}
-        <JourneyCards journeys={journeys} />
+        {journeyCount > 0 ? (
+          <JourneyCards journeys={journeys} />
+        ) : (
+          <p className="text-sm font-semibold">
+            You haven't created any journeys yet. Click the "New Journey" button
+            above to start documenting your adventures.
+          </p>
+        )}
       </div>
     </div>
   );

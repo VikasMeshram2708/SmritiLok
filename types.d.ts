@@ -1,3 +1,4 @@
+// journey fetch response
 type JourneyResponse = {
   id: string;
   title: string;
@@ -10,4 +11,16 @@ type JourneyResponse = {
   createdAt: Date;
   updatedAt: Date;
   userId: string | null;
+};
+
+// journey schema
+type JourneySchema = {
+  title: string;
+  description?: string;
+  date: string;
+  location: string;
+  tags?: string[];
+  mediaType?: "IMAGE" | "VIDEO";
+  media: string;
+  notes?: string;
 };

@@ -5,6 +5,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   CLERK_SECRET_KEY: z.string(),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+  IMAGEKIT_PRIVATE_KEY: z.string(),
+  IMAGEKIT_PUBLIC_KEY: z.string(),
 });
 
 const parsed = envSchema.safeParse({
@@ -12,6 +14,8 @@ const parsed = envSchema.safeParse({
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+  IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
 });
 
 if (!parsed.success) {
@@ -29,5 +33,7 @@ export default {
     DATABASE_URL: env.DATABASE_URL,
     CLERK_SECRET_KEY: env.CLERK_SECRET_KEY,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    IMAGEKIT_PRIVATE_KEY: env.IMAGEKIT_PRIVATE_KEY,
+    IMAGEKIT_PUBLIC_KEY: env.IMAGEKIT_PUBLIC_KEY,
   },
 };

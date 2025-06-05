@@ -50,8 +50,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const { title, date, location, description, mediaFile, notes, tags } =
-      parsed.data;
+    const {
+      title,
+      date,
+      location,
+      description,
+      media,
+      mediaType,
+      notes,
+      tags,
+    } = parsed.data;
 
     if (!userExists) {
       // if no then save it
@@ -71,7 +79,8 @@ export async function POST(req: NextRequest) {
         date,
         location,
         description,
-        media: mediaFile,
+        media: media ?? null,
+        mediaType,
         notes,
         tags,
         User: {
@@ -87,7 +96,11 @@ export async function POST(req: NextRequest) {
 
     // return the response
     return new Response(
-      JSON.stringify({ success: false, message: "Journey logged" }),
+      JSON.stringify({
+        success: false,
+        message: "Journey logged",
+        callbackUrl: "/journeys",
+      }),
       {
         headers: {
           "Content-Type": "application/json",

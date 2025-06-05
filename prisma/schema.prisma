@@ -29,6 +29,12 @@ model User {
   journey Journey[]
 }
 
+// media type enum 
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
 // journey model
 model Journey {
   id String @id @default(uuid()) @map("_id")
@@ -39,6 +45,7 @@ model Journey {
   location    String
   tags        String[]
   notes       String?
+  mediaType   MediaType? @default(IMAGE)
   media       String?
 
   createdAt DateTime @default(now())

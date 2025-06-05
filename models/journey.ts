@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v4";
 
 // Production-grade journey schema
 export const journeySchema = z
@@ -15,8 +15,7 @@ export const journeySchema = z
       .optional(),
     date: z
       .string({
-        required_error: "Date is required",
-        invalid_type_error: "Invalid date format",
+        error: "Invalid date format",
       })
       .min(1, { message: "Date is required" }),
     location: z
@@ -34,7 +33,8 @@ export const journeySchema = z
       )
       .max(10, { message: "At most 10 tags allowed" })
       .optional(),
-    mediaFile: z.enum(["IMAGE", "VIDEO"]).optional(),
+    mediaType: z.enum(["IMAGE", "VIDEO"]).optional(),
+    media: z.string().min(1),
     notes: z
       .string()
       .trim()
