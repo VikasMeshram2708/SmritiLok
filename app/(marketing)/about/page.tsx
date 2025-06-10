@@ -65,7 +65,7 @@ export default function AboutPage() {
             Your Story Matters
           </h1>
           <p className="text-muted-foreground text-xl max-w-3xl mx-auto">
-            Smriti Lok was founded in 2023 to revolutionize how humans preserve
+            Smriti Lok was founded in 2025 to revolutionize how humans preserve
             their most precious memories.
           </p>
         </div>

@@ -1,7 +1,7 @@
 import * as z from "zod/v4";
 
 // Production-grade journey schema
-export const journeySchema = z
+export const memorySchema = z
   .object({
     title: z
       .string()
@@ -43,10 +43,10 @@ export const journeySchema = z
   })
   .strict();
 
-export type JourneySchema = z.infer<typeof journeySchema>;
+export type MemorySchema = z.infer<typeof memorySchema>;
 
 // delete journey schema
-export const deleteJourneySchema = z.object({
-  journeyId: z.string(),
+export const deleteMemorySchema = z.object({
+  memoryId: z.string(),
 });
-export type DeleteJourneySchema = z.infer<typeof deleteJourneySchema>;
+export type DeleteMemorySchema = z.infer<typeof deleteMemorySchema>;

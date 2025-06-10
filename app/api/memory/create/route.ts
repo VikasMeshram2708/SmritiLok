@@ -5,7 +5,7 @@
 
 import { rateLimit } from "@/lib/limiter";
 import prisma from "@/lib/prisma";
-import { journeySchema } from "@/models/journey";
+import { memorySchema } from "@/models/memory";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { NextRequest } from "next/server";
@@ -30,10 +30,10 @@ export async function POST(req: NextRequest) {
     }
 
     // validate schema
-    const parsed = journeySchema.safeParse(data);
+    const parsed = memorySchema.safeParse(data);
 
     if (!parsed.success) {
-      const err = parsed.error.flatten().fieldErrors;
+      const err = z.flattenError(parsed.error);
 
       return new Response(JSON.stringify({ success: false, message: err }), {
         headers: {
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // save the journey log
-    await prisma.journey.create({
+    await prisma.memory.create({
       data: {
         title,
         date,
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         mediaType,
         notes,
         tags,
-        User: {
+        user: {
           connect: {
             email: authUser?.primaryEmailAddress?.emailAddress ?? "",
           },

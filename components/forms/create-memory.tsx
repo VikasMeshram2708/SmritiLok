@@ -15,7 +15,7 @@ import {
   upload,
 } from "@imagekit/next";
 
-export default function CreateJourney() {
+export default function CreateMemory() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -31,7 +31,7 @@ export default function CreateJourney() {
     formState: { errors },
     setValue,
     reset,
-  } = useForm<JourneySchema>();
+  } = useForm<MemorySchema>();
 
   // Handle file selection
   const handleFileSelect = (file: File) => {
@@ -133,7 +133,7 @@ export default function CreateJourney() {
     }
   };
 
-  const onSubmit: SubmitHandler<JourneySchema> = async (data) => {
+  const onSubmit: SubmitHandler<MemorySchema> = async (data) => {
     if (!selectedFile) {
       alert("Please select a media file");
       return;
@@ -171,7 +171,7 @@ export default function CreateJourney() {
       }
 
       // Now include the uploaded media URL in the form submission
-      const response = await fetch("/api/journey/create", {
+      const response = await fetch("/api/memory/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,10 +185,10 @@ export default function CreateJourney() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save journey data to the server.");
+        throw new Error("Failed to add memory data to the server.");
       }
 
-      alert("Journey created successfully!");
+      alert("Memory added successfully!");
       handleReset();
       // redirect to journeys page
     } catch (error) {
@@ -229,7 +229,7 @@ export default function CreateJourney() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Create New Journey</h1>
+      <h1 className="text-2xl font-bold mb-6">Add New Memory</h1>
 
       <div className="space-y-6">
         {/* Title */}
@@ -422,7 +422,7 @@ export default function CreateJourney() {
                   alt="Preview"
                   width={256}
                   height={128}
-                  className="max-w-full h-32 object-cover rounded-lg"
+                  className="max-w-full h-auto w-auto object-cover rounded-lg"
                   style={{
                     width: "100%",
                     height: "8rem",

@@ -51,7 +51,7 @@ export default async function ProtectedNavbar() {
             </DropdownMenu>
           )}
           <Button className="tracking-wider">
-            <Link href="/journeys/new">New Journey</Link>
+            <Link href="/memories/new">New Memory</Link>
           </Button>
         </ul>
       </div>

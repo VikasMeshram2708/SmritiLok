@@ -15,7 +15,7 @@ export default async function Navbar() {
         <ul className="text-sm flex items-center gap-4">
           {userId && (
             <li>
-              <Link href="/journeys">Journeys</Link>
+              <Link href="/memories">Memories</Link>
             </li>
           )}
           <li>
@@ -25,7 +25,7 @@ export default async function Navbar() {
             <Link href="/about">About</Link>
           </li>
           <Button className="tracking-wider">
-            <Link href="/journeys">Start Logging</Link>
+            <Link href="/memories">Start Logging</Link>
           </Button>
         </ul>
       </div>

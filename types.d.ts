@@ -1,5 +1,5 @@
 // journey fetch response
-type JourneyResponse = {
+type MemoryResponse = {
   id: string;
   title: string;
   description: string | null;
@@ -14,7 +14,7 @@ type JourneyResponse = {
 };
 
 // journey schema
-type JourneySchema = {
+type MemorySchema = {
   title: string;
   description?: string;
   date: string;

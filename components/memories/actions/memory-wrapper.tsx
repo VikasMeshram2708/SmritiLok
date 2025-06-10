@@ -4,19 +4,19 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Input } from "../../ui/input";
 import { useDebounce } from "@/lib/useDebounce";
 import { useRouter, useSearchParams } from "next/navigation";
-import JourneyCards from "../journey-cards";
-import JourneyFilterBns from "../journey-filter-btns";
+import MemoryCards from "../memory-cards";
+import MemoryFilterBns from "../memory-filter-btns";
 
-export default function JourneyWrapper({
+export default function MemoryWrapper({
   journeyCount,
   allJourneys,
 }: {
   journeyCount: number;
-  allJourneys: JourneyResponse[];
+  allJourneys: MemoryResponse[];
 }) {
   const [text, setText] = useState("");
   const debouncedText = useDebounce(text, 500);
-  const [results, setResults] = useState<JourneyResponse[]>([]);
+  const [results, setResults] = useState<MemoryResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
 
@@ -40,7 +40,7 @@ export default function JourneyWrapper({
       setLoading(true);
       setNoResults(false);
       try {
-        const response = await fetch("/api/journey/search", {
+        const response = await fetch("/api/memory/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export default function JourneyWrapper({
             value={text}
             onChange={(e) => setText(e.target.value)}
             type="text"
-            placeholder="Search journeys"
+            placeholder="Search memories"
             className="pl-10 text-muted-foreground"
             aria-label="Search journeys"
             autoComplete="off"
@@ -99,19 +99,24 @@ export default function JourneyWrapper({
         </div>
 
         {/* filter buttons */}
-        <JourneyFilterBns />
+        <MemoryFilterBns />
       </div>
 
       {journeyCount === 0 ? (
-        <p className="text-sm font-semibold mt-4">
-          You {"haven't"} created any journeys yet. Click the {`"New Journey"`}
-          button above to start documenting your adventures.
-        </p>
+        <div className="text-center mt-4">
+          <p className="text-sm font-semibold">
+            You haven't added any memories yet.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Click the <span className="font-medium">"New Memory"</span> button
+            above to start documenting your memories.
+          </p>
+        </div>
       ) : noResults && debouncedText.trim() ? (
-        <p className="text-sm text-muted-foreground mt-4">No journeys found.</p>
+        <p className="text-sm text-muted-foreground mt-4">No memories found.</p>
       ) : (
         <Suspense fallback={<Loader2 className="animate-spin" />}>
-          <JourneyCards data={debouncedText.trim() ? results : allJourneys} />
+          <MemoryCards data={debouncedText.trim() ? results : allJourneys} />
         </Suspense>
       )}
     </>

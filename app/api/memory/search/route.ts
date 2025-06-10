@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
     // Search journeys with case-insensitive partial match in title or description
-    const journeys = await prisma.journey.findMany({
+    const journeys = await prisma.memory.findMany({
       where: {
         OR: [
           {

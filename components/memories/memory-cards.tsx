@@ -1,5 +1,5 @@
 /**
- * This component holds all the journey cards
+ * This component holds all the memory cards
  */
 
 import Image from "next/image";
@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Link from "next/link";
-import { EllipsisVertical, Loader2, Share2, SquarePen } from "lucide-react";
+import { EllipsisVertical, Loader2, SquarePen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,10 +21,10 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Suspense } from "react";
-import DeleteJourney from "./delete-journey";
 import { Button } from "../ui/button";
+import DeleteMemory from "./delete-memory";
 
-export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
+export default function MemoryCards({ data }: { data: MemoryResponse[] }) {
   return (
     <Suspense
       fallback={
@@ -35,16 +35,16 @@ export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
       }
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.map((journey) => (
+        {data?.map((memory) => (
           <Card
             className="bg-transparent border-none outline-none p-0"
-            key={journey?.id}
+            key={memory?.id}
           >
             <CardContent className="p-0">
               <div className="relative aspect-video">
                 <Image
-                  src={journey?.media ?? "https://picsum.photos/800/600"}
-                  alt="journey title"
+                  src={memory?.media ?? "https://picsum.photos/800/600"}
+                  alt="memory title"
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 400px"
@@ -54,8 +54,8 @@ export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
             </CardContent>
             <CardHeader className="p-0 bg-none -mt-2">
               <CardTitle className="capitalize cursor-pointer hover:underline hover:underline-offset-4 leading-relaxed line-clamp-2 font-semibold">
-                <Link href={`/journeys/${journey?.id}`}>
-                  {journey.title ?? journey?.description}
+                <Link href={`/memories/${memory?.id}`}>
+                  {memory.title ?? memory?.description}
                 </Link>
               </CardTitle>
               <CardDescription>
@@ -71,12 +71,12 @@ export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
                     <EllipsisVertical />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>
+                    {/* <DropdownMenuItem>
                       <Button variant={"ghost"}>
                         <Share2 />
                         Share
                       </Button>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem>
                       <Button variant={"ghost"}>
                         <SquarePen />
@@ -85,7 +85,7 @@ export default function JourneyCards({ data }: { data: JourneyResponse[] }) {
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       {/* Delete button */}
-                      <DeleteJourney journeyId={journey?.id} />
+                      <DeleteMemory memoryId={encodeURIComponent(memory?.id)} />
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

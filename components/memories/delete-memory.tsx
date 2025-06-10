@@ -11,21 +11,21 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { Loader2, Trash2Icon, X } from "lucide-react";
 import { useRef, useTransition } from "react";
 
-export default function DeleteJourney({ journeyId }: { journeyId: string }) {
+export default function DeleteMemory({ memoryId }: { memoryId: string }) {
   // close ref
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const [isPending, startTransition] = useTransition();
   async function handleDelete() {
     startTransition(async () => {
       try {
-        if (!journeyId) return;
+        if (!memoryId) return;
         // api req
-        const response = await fetch("/api/journey/delete", {
+        const response = await fetch("/api/memory/delete", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ journeyId }),
+          body: JSON.stringify({ memoryId }),
         });
         const json = await response.json();
         console.log("json", json);

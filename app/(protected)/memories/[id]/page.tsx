@@ -1,4 +1,4 @@
-import JourneyShareBtn from "@/components/journeys/journey-share-btn";
+import JourneyShareBtn from "@/components/memories/memory-share-btn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
@@ -18,7 +18,7 @@ export async function generateMetadata({
   params,
 }: JourneyDetailPageParams): Promise<Metadata> {
   const { id } = await params;
-  const journey = await prisma.journey.findUnique({
+  const journey = await prisma.memory.findUnique({
     where: {
       id: decodeURIComponent(id) ?? "",
     },
@@ -38,7 +38,7 @@ export default async function JourneyDetailPage({
   params,
 }: JourneyDetailPageParams) {
   const { id } = await params;
-  const journey = await prisma.journey.findUnique({
+  const journey = await prisma.memory.findUnique({
     where: {
       id: decodeURIComponent(id),
     },
@@ -50,7 +50,7 @@ export default async function JourneyDetailPage({
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-5xl mx-auto space-y-6">
         <Button variant={"ghost"}>
-          <Link className="flex items-center gap-1" href="/journeys">
+          <Link className="flex items-center gap-1" href="/memories">
             <ChevronLeft />
             Back
           </Link>

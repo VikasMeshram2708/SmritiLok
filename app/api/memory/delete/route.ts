@@ -5,7 +5,7 @@
 
 import { rateLimit } from "@/lib/limiter";
 import prisma from "@/lib/prisma";
-import { deleteJourneySchema } from "@/models/journey";
+import { deleteMemorySchema } from "@/models/memory";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { NextRequest } from "next/server";
@@ -29,7 +29,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     // validate schema
-    const parsed = deleteJourneySchema.safeParse(data);
+    const parsed = deleteMemorySchema.safeParse(data);
 
     if (!parsed.success) {
       const err = parsed.error ? z.treeifyError(parsed.error) : undefined;
@@ -42,23 +42,24 @@ export async function DELETE(req: NextRequest) {
       });
     }
 
-    const { journeyId } = parsed.data;
+    const { memoryId } = parsed.data;
+    // console.log("incd-mid", memoryId);
 
     // delete the journey log
-    await prisma.journey.delete({
+    await prisma.memory.delete({
       where: {
-        id: journeyId,
+        id: memoryId,
       },
     });
 
     // revalidate the path
-    revalidatePath("/journeys");
+    revalidatePath("/memories");
 
     // return the response
     return new Response(
       JSON.stringify({
-        success: false,
-        message: "Journey Deleted",
+        success: true,
+        message: "Memory Deleted",
       }),
       {
         headers: {
