@@ -31,7 +31,7 @@ export default async function ProtectedNavbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
-                  <Link href="/journeys">Journeys</Link>
+                  <Link href="/memories">Journeys</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link href="/profile">Profile</Link>

@@ -19,10 +19,12 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <button className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition shadow-md shadow-indigo-100">
-                <Link href="/journeys">Start Your Journey - {"It's"} Free</Link>
+                <Link href="/memories/new">
+                  Start Your Journey - {"It's"} Free
+                </Link>
               </button>
               <Link
-                href="/explore"
+                href="/memories"
                 className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center"
               >
                 <svg
@@ -48,9 +50,7 @@ export default function Home() {
                     className="w-10 h-10 rounded-full border-2 border-white relative overflow-hidden"
                   >
                     <Image
-                      src={`https://randomuser.me/api/portraits/${
-                        item % 2 === 0 ? "women" : "men"
-                      }/${item}0.jpg`}
+                      src={`https://i.pravatar.cc/40?img=${item}`}
                       alt="User"
                       width={40}
                       height={40}
@@ -254,14 +254,14 @@ export default function Home() {
                   "Smriti Lok has transformed how I document my travels. It's like having a beautiful, private museum of my life.",
                 name: "Sarah Johnson",
                 role: "Travel Blogger",
-                avatar: "https://randomuser.me/api/portraits/women/43.jpg",
+                avatar: "https://i.pravatar.cc/150?img=43",
               },
               {
                 quote:
                   "As someone who journals daily, Smriti Lok's organization features save me hours while making my entries more meaningful.",
                 name: "Michael Chen",
                 role: "Author & Journalist",
-                avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                avatar: "https://i.pravatar.cc/150?img=32",
               },
             ].map((testimonial, index) => (
               <div key={index} className="bg-white p-8 rounded-xl shadow-sm">
@@ -315,7 +315,7 @@ export default function Home() {
             with Smriti Lok.
           </p>
           <button className="px-8 py-3 bg-white text-indigo-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg">
-            <Link href="/journeys">Get Started - {"It's"} Free</Link>
+            <Link href="/memories">Get Started - {"It's"} Free</Link>
           </button>
         </div>
       </section>

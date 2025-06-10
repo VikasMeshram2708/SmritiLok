@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     });
 
     // revalidate the path
-    revalidatePath("/journeys/**");
+    revalidatePath("/memories/**");
 
     // return the response
     return new Response(

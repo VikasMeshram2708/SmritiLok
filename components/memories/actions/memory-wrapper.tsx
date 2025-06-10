@@ -5,7 +5,6 @@ import { Input } from "../../ui/input";
 import { useDebounce } from "@/lib/useDebounce";
 import { useRouter, useSearchParams } from "next/navigation";
 import MemoryCards from "../memory-cards";
-import MemoryFilterBns from "../memory-filter-btns";
 
 export default function MemoryWrapper({
   journeyCount,
@@ -97,18 +96,15 @@ export default function MemoryWrapper({
             />
           )}
         </div>
-
-        {/* filter buttons */}
-        <MemoryFilterBns />
       </div>
 
       {journeyCount === 0 ? (
         <div className="text-center mt-4">
           <p className="text-sm font-semibold">
-            You haven't added any memories yet.
+            You {"haven't"} added any memories yet.
           </p>
           <p className="text-sm text-muted-foreground">
-            Click the <span className="font-medium">"New Memory"</span> button
+            Click the <span className="font-medium">{"New Memory"}</span> button
             above to start documenting your memories.
           </p>
         </div>

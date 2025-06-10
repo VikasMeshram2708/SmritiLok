@@ -168,7 +168,7 @@ export default function AboutPage() {
             Join millions documenting their life stories with Smriti Lok.
           </p>
           <Button size="lg" asChild>
-            <Link href="/journeys">Start Preserving Memories</Link>
+            <Link href="/memories">Start Preserving Memories</Link>
           </Button>
         </div>
       </div>
